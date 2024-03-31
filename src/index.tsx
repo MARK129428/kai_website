@@ -5,18 +5,31 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import './index.css';
-import App from './App';
+import Root, {
+  loader as rootLoader,
+  action as rootAction,
+} from "./routes/root";
+import App from './App'
+import ErrorPage from "./error-page";
+import Contact from "./routes/contact";
 import reportWebVitals from './reportWebVitals';
 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>,
-    errorElement: <div>出错了</div>
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    loader: rootLoader,
+    action: rootAction,
+    children: [
+      {
+        path: "contacts/:contactId",
+        element: <App/>,
+      },
+    ],
   },
 ]);
-
 
 
 const root = ReactDOM.createRoot(

@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { create } from 'zustand'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+type State = {
+  firstName: string
+  lastName: string
 }
 
-export default App;
+type Action = {
+  updateFirstName: (firstName: State['firstName']) => void
+  updateLastName: (lastName: State['lastName']) => void
+}
+
+// Create your store, which includes both state and (optionally) actions
+const usePersonStore = create<State & Action>((set) => ({
+  firstName: '',
+  lastName: '',
+  updateFirstName: (firstName) => set(() => ({ firstName: firstName })),
+  updateLastName: (lastName) => set(() => ({ lastName: lastName })),
+}))
+
+// In consuming app
+export default function App() {
+  // "select" the needed state and actions, in this case, the firstName value
+  // and the action updateFirstName
+  const firstName = usePersonStore((state) => state.firstName)
+  const updateFirstName = usePersonStore((state) => state.updateFirstName)
+
+  return (
+    <main>
+      <label>
+        First name
+        <input
+          // Update the "firstName" state
+          onChange={(e) => updateFirstName(e.currentTarget.value)}
+          value={firstName}
+        />
+      </label>
+
+      <p>
+        Hello, <strong>{firstName}!</strong>
+      </p>
+    </main>
+  )
+}
